@@ -197,7 +197,7 @@ To help improve <a href="//ars.altervista.org/index.php">my website</a>'s PHP co
 Now the script, though not yet fail-proof, begins to do its job, so I decided to share it on the web: I used PHP developers work for building my website (PHP is a great language!), so I think it is fair to help someone else by giving out the result of my work.<br>
 
 <br><b>Source code of these pages</b><br>
-You can download the whole lint_php source code <a href="lint_php.php?lint_action=download">here</a>: it is under GPL v3, so you can study it, modify it, use it as you want, but you must give the same rights to the people to which you redistribute it.<br>
+You can download the whole lint_php source code as a <a href="lint_php.php?lint_action=download">compressed archive</a> or from a <a href="http://github.com/pceres/lint_php">git repository</a> ("git clone git@github.com:pceres/lint_php.git" if you like command line and want to collaborate!): it is under GPL v3, so you can study it, modify it, use it as you want, but you must give the same rights to the people to which you redistribute it.<br>
 If you have an Apache-PHP system (virtually every GNU/Linux distribution), you can use the script offline, without using an Internet connection: this is the way I use it on my laptop, powered by a Slackware GNU/Linux distribution!<br>
 
 <br><b>History</b><br>
@@ -388,6 +388,7 @@ $logdata[$string] = $item;
 
 // write logdata
 $fid = fopen($logfile,'w');
+
 if ($fid !== False)
 {
 	foreach ($logdata as $tag => $value_array)
