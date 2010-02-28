@@ -315,7 +315,7 @@ $list_lines_out = Array();
 $list_numlines_out = Array();
 
 $enlined_lines = '';
-$rem_state = Array('rem_state',0); // out of php code
+$rem_state = Array('rem_state' => 0); // out of php code
 for($i=0;$i < count($list_lines_in); $i++)
 {
 	$line = rtrim(strtolower($list_lines_in[$i]));
@@ -351,13 +351,21 @@ $list_lines_out = Array();
 $list_numlines_out = Array();
 
 $enlined_lines = '';
-$rem_state = Array('rem_state',0); // out of php code
+$rem_state = Array('rem_state' => 0); // out of php code
 for($i=0;$i < count($list_lines_in); $i++)
 {
 	$line = $list_lines_in[$i];
 	$numline = $list_numlines_in[$i];
 
-	$nextline = $list_lines_in[$i+1];
+	if (isset($list_lines_in[$i+1]))
+	{
+		$nextline = $list_lines_in[$i+1];
+	}
+	else
+	{
+		$nextline = ' ';
+	}
+
 	$first_char = $nextline[0]; // first char of the next line
 
 	$line_current = $line;
@@ -655,7 +663,7 @@ for ($i_tag = 0;$i_tag < count($list_string_tag);$i_tag++)
 $string_tag = '<<<([a-zA-Z_][a-zA-Z0-9_]+)$';
 preg_match_all("/$string_tag/",$line,$z);
 
-if ( count($z[1][0]) > 0 )
+if ( isset($z[1][0]) && (count($z[1][0]) > 0) )
 {
 	$heredoc_close_tag = $z[1][0];
 	preg_match("/$string_tag/",$line,$z,PREG_OFFSET_CAPTURE);
@@ -1859,7 +1867,7 @@ if ((!$is_script) && ($i_fcn == 1))
 {
 
 	////$ind = ereg('[\\\/]',$filename);
-	$ind = preg_match('/[\\\/]/',$filename);
+	$ind = preg_match('/[\\\\\/]/',$filename);
 	if (!empty($ind))
 	{
 		$filename = substr($filename,$ind);
