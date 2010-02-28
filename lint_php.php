@@ -216,7 +216,7 @@ If you have an Apache-PHP system (virtually every GNU/Linux distribution), you c
 <li>rev 0.9: added management of ternary statements (bug signalled by Charlew Rowe); (23.12.2009)</li>
 <li>rev 0.10: bug fixing of multi-line ternary statements with comments inside; (29.12.2009)</li>
 <li>rev 0.11: bug fixing of /*...*/ comments in HTML\Javascript code; (06.01.2010)</li>
-<li>rev 0.12: deprecated ereg functions replaced with preg counterparts; (28.02.2010)</li>
+<li>rev 0.12: command line usage; deprecated ereg functions replaced with preg counterparts; (28.02.2010)</li>
 </ul>
 
 <br><b>How can you contribute?</b><br>
