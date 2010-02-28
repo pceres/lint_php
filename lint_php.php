@@ -1,9 +1,9 @@
 <?php
 /*
 
-    php_lint: a PHP script that computes McCabe's cyclomatic complexity of a generic PHP source code
+    lint_php: a PHP script that computes McCabe's cyclomatic complexity of a generic PHP source code
     Copyright (C) 2007  Pasquale Ceres
-    Version 0.12rc1
+    Version 0.12
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

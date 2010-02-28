@@ -1,0 +1,10 @@
+
+url for online web usage:
+http://ars.altervista.org/lint_php/lint_php.php
+
+url for local web usage:
+http://localhost/<lint_php_folder>/lint_php.php
+
+command line use:
+php lint_php_cli.php filename.php
+

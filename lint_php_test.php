@@ -58,6 +58,9 @@ print "</b></a><br /><br />";
 	}
 }
 
+// while cycle outside function definitions
+while ($i <= 10) echo $i++;
+
 function test5()
 {
 while ($i <= 10) {

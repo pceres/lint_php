@@ -1,9 +1,9 @@
 <?php
 /*
 
-    php_lint_lib: a PHP script that computes McCabe's cyclomatic complexity of a generic PHP source code
+    lint_php_lib: a PHP script that computes McCabe's cyclomatic complexity of a generic PHP source code
     Copyright (C) 2007  Pasquale Ceres
-    Version 0.12rc1
+    Version 0.12
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -191,18 +191,14 @@ for($i_file = 0; $i_file<count($list_files); $i_file++)
 	}
 
 	
-	$res_lint = show_functions($lista_functions, $is_script, $filename, $verbosity);
+	$res_lint = show_functions($lista_functions, $verbosity);
 	
 	$result = Array();
-	$result['filename']     = $filename;
 	$result['lines_in']     = Array('lines' => $list_lines_in, 'numlines' => $list_numlines_in);
 	$result['lines_split']  = Array('lines' => $list_lines_split, 'numlines' => $list_numlines_split);
 	$result['lines_out']    = Array('lines' => $list_lines_out, 'numlines' => $list_numlines_out, 'list_indent_out' => $list_indent_out, 'indent_mccount' => $indent_mccount);
 	$result['lista_functions'] = $lista_functions;
 
-
-	$result['num_differences'] = $num_differences;
-	$result['res_diff'] = $res_diff;
 	$result['res_lint'] = $res_lint;
 
 
@@ -1057,7 +1053,6 @@ for ($i=0;$i<count($list_lines_in);$i++) {
 	{
 		$tok = $list_begin_end_tokens[$i_tok];
 		
-		////if ( (strpos($line,$tok) === 0) && (ereg($tok.'[^{]*{',$line)===false) )
 		if ( (strpos($line,$tok) === 0) && (preg_match('/' . $tok . '[^{]*{/',$line)==0) )
 		{
 			$parenthesys_flag = 1;
@@ -1066,7 +1061,6 @@ for ($i=0;$i<count($list_lines_in);$i++) {
 
 
 	// a 'while' after 'do' isn't followed by a complex instruction
-	////if ($parenthesys_flag && (ereg('^while.*;$',$line)!==false) )
 	if ($parenthesys_flag && (preg_match('/^while.*;$/',$line)>0) )
 	{
 		$parenthesys_flag = 0;
@@ -1259,7 +1253,6 @@ return Array($list_indent, $lista_functions, $lista_function_names, $list_lines_
 function indent_line($line, $numline, $indent, $indent_tokens, $token, $list_tokens, $function_info, $list_token, $lista_functions, $lista_function_names, $stati) {
 
 // insert a space before open braces
-////$line = ereg_replace('([^[:space:]]){',"\\1 {",$line);
 $line = preg_replace('/([^[:space:]]){/',"\\1 {",$line);
 
 $mc_inc = 0; // by default each line doesn't increment the McCabe cyclomatic complexity counter
@@ -1289,7 +1282,6 @@ else
 if (array_key_exists('subst_line',$stati) && (!empty($stati['subst_line'])))
 {
 
-	////$line = ereg_replace($stati['subst_line'][0],$stati['subst_line'][1],$line);
 	$line = preg_replace('/' . $stati['subst_line'][0] . '/',$stati['subst_line'][1],$line);
 	$stati['line_modified'] = $line;
 	$stati['subst_line'] = Array();
@@ -1301,7 +1293,6 @@ else
 	// a new complex instruction starts?
 	for ($i_inc = 0; $i_inc < count($list_inc0); $i_inc++)
 	{
-		////if (ereg('^'.$list_inc0[$i_inc].'[^[:alnum:]]?',$line))
 		if (preg_match('/^'.$list_inc0[$i_inc].'[^[:alnum:]]?/',$line))
 		{
 			$token_next['inc'] = $list_inc0[$i_inc];
@@ -1347,7 +1338,6 @@ else
 
 
 // current function finishes, a new starts (included the root function, for scripts not inside function tags)
-//// if ( (ereg('^(private |public |protected )*function ',$line)) || ($close_function) )
 if ( (preg_match('/^(private |public |protected )*function /',$line)) || ($close_function) )
 {
 
@@ -1471,7 +1461,6 @@ while ($ancora)
 
 	$needle = $token['mid'][$i_mid];
 
-	////if (ereg($needle,$line))
 	if (!empty($needle) && preg_match('/' . addcslashes($needle, '/') . '/',$line))
 	{
 		$ancora=0;
@@ -1625,8 +1614,7 @@ while ($ancora)
 {
 	$pat = $list[$i];
 	$function_info = Array();
-	////$temp = ereg($pat,$line,&$temp_function_info);
-	$temp = preg_match('/' . addcslashes($pat, '/') . '/',$line,&$temp_function_info);
+	$temp = preg_match('/' . addcslashes($pat, '/') . '/',$line,$temp_function_info);
 	$function_info['function'] = $temp_function_info[1];
 	$function_info['args_in'] = $temp_function_info[2];
 
@@ -1672,11 +1660,9 @@ else
 if (!empty($function_info['args_in']))
 {
 	// drop "&" for referenced arguments
-	////$function_info['args_in'] = ereg_replace('&','',$function_info['args_in']);
 	$function_info['args_in'] = preg_replace('/&/','',$function_info['args_in']);
 
 	// drop default values ("... $a=NULL ..." --> "... $a ..." )	
-	////$function_info['args_in'] = ereg_replace('=[[:space:]]*[^[:space:]]+[[:space:]]*', ' ',$function_info['args_in']);
 	$function_info['args_in'] = preg_replace('/=[[:space:]]*[^[:space:]]+[[:space:]]*/', ' ',$function_info['args_in']);
 
 	// split input arguments
@@ -1769,7 +1755,7 @@ return $riga;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-function show_functions($lista_functions, $is_script, $filename, $verbosity) {
+function show_functions($lista_functions, $verbosity) {
 
 $result = Array();
 $ks_space = str_repeat('&nbsp;',8);
@@ -1833,7 +1819,7 @@ for ($i_fcn = 0; $i_fcn < count($lista_functions); $i_fcn++)
 
 
 	// check declared but unused functions
-	$result = manage_unused_function($fcn_name, $fcn_unused_flag, $is_script, $i_fcn, $filename, $result, $verbosity);
+	$result = manage_unused_function($fcn_name, $fcn_unused_flag, $result, $verbosity);
 
 
 	// check unused input
@@ -1857,24 +1843,11 @@ return $result;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-function manage_unused_function($fcn_name, $fcn_unused_flag, $is_script, $i_fcn, $filename, $result, $verbosity) {
+function manage_unused_function($fcn_name, $fcn_unused_flag, $result, $verbosity) {
 
 $ks_space = str_repeat('&nbsp;',8);
 
-
-// mfile with first function different from file name
-if ((!$is_script) && ($i_fcn == 1))
-{
-
-	////$ind = ereg('[\\\/]',$filename);
-	$ind = preg_match('/[\\\\\/]/',$filename);
-	if (!empty($ind))
-	{
-		$filename = substr($filename,$ind);
-	}
-
-}
-elseif ($fcn_unused_flag)
+if ($fcn_unused_flag)
 {
 
 	// unused functions
