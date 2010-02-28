@@ -3,7 +3,7 @@
 
     php_lint: a PHP script that computes McCabe's cyclomatic complexity of a generic PHP source code
     Copyright (C) 2007  Pasquale Ceres
-    Version 0.11
+    Version 0.12rc1
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -216,6 +216,7 @@ If you have an Apache-PHP system (virtually every GNU/Linux distribution), you c
 <li>rev 0.9: added management of ternary statements (bug signalled by Charlew Rowe); (23.12.2009)</li>
 <li>rev 0.10: bug fixing of multi-line ternary statements with comments inside; (29.12.2009)</li>
 <li>rev 0.11: bug fixing of /*...*/ comments in HTML\Javascript code; (06.01.2010)</li>
+<li>rev 0.12: deprecated ereg functions replaced with preg counterparts; (28.02.2010)</li>
 </ul>
 
 <br><b>How can you contribute?</b><br>

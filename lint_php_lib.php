@@ -3,7 +3,7 @@
 
     php_lint_lib: a PHP script that computes McCabe's cyclomatic complexity of a generic PHP source code
     Copyright (C) 2007  Pasquale Ceres
-    Version 0.11
+    Version 0.12rc1
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1049,7 +1049,8 @@ for ($i=0;$i<count($list_lines_in);$i++) {
 	{
 		$tok = $list_begin_end_tokens[$i_tok];
 		
-		if ( (strpos($line,$tok) === 0) && (ereg($tok.'[^{]*{',$line)===false) )
+		////if ( (strpos($line,$tok) === 0) && (ereg($tok.'[^{]*{',$line)===false) )
+		if ( (strpos($line,$tok) === 0) && (preg_match('/' . $tok . '[^{]*{/',$line)==0) )
 		{
 			$parenthesys_flag = 1;
 		}
@@ -1057,7 +1058,8 @@ for ($i=0;$i<count($list_lines_in);$i++) {
 
 
 	// a 'while' after 'do' isn't followed by a complex instruction
-	if ($parenthesys_flag && (ereg('^while.*;$',$line)!==false) )
+	////if ($parenthesys_flag && (ereg('^while.*;$',$line)!==false) )
+	if ($parenthesys_flag && (preg_match('/^while.*;$/',$line)>0) )
 	{
 		$parenthesys_flag = 0;
 	}
@@ -1249,7 +1251,8 @@ return Array($list_indent, $lista_functions, $lista_function_names, $list_lines_
 function indent_line($line, $numline, $indent, $indent_tokens, $token, $list_tokens, $function_info, $list_token, $lista_functions, $lista_function_names, $stati) {
 
 // insert a space before open braces
-$line = ereg_replace('([^[:space:]]){',"\\1 {",$line);
+////$line = ereg_replace('([^[:space:]]){',"\\1 {",$line);
+$line = preg_replace('/([^[:space:]]){/',"\\1 {",$line);
 
 $mc_inc = 0; // by default each line doesn't increment the McCabe cyclomatic complexity counter
 
@@ -1278,7 +1281,8 @@ else
 if (array_key_exists('subst_line',$stati) && (!empty($stati['subst_line'])))
 {
 
-	$line = ereg_replace($stati['subst_line'][0],$stati['subst_line'][1],$line);
+	////$line = ereg_replace($stati['subst_line'][0],$stati['subst_line'][1],$line);
+	$line = preg_replace('/' . $stati['subst_line'][0] . '/',$stati['subst_line'][1],$line);
 	$stati['line_modified'] = $line;
 	$stati['subst_line'] = Array();
 
@@ -1289,7 +1293,8 @@ else
 	// a new complex instruction starts?
 	for ($i_inc = 0; $i_inc < count($list_inc0); $i_inc++)
 	{
-		if (ereg('^'.$list_inc0[$i_inc].'[^[:alnum:]]?',$line))
+		////if (ereg('^'.$list_inc0[$i_inc].'[^[:alnum:]]?',$line))
+		if (preg_match('/^'.$list_inc0[$i_inc].'[^[:alnum:]]?/',$line))
 		{
 			$token_next['inc'] = $list_inc0[$i_inc];
 			$token_next['mid'] = $list_mid0[$i_inc];
@@ -1334,7 +1339,8 @@ else
 
 
 // current function finishes, a new starts (included the root function, for scripts not inside function tags)
-if ( (ereg('^(private |public |protected )*function ',$line)) || ($close_function) )
+//// if ( (ereg('^(private |public |protected )*function ',$line)) || ($close_function) )
+if ( (preg_match('/^(private |public |protected )*function /',$line)) || ($close_function) )
 {
 
 	// first verify the tokens found in previous function...
@@ -1457,7 +1463,8 @@ while ($ancora)
 
 	$needle = $token['mid'][$i_mid];
 
-	if (ereg($needle,$line))
+	////if (ereg($needle,$line))
+	if (!empty($needle) && preg_match('/' . addcslashes($needle, '/') . '/',$line))
 	{
 		$ancora=0;
 		$ind_mid = $i_mid;
@@ -1610,7 +1617,8 @@ while ($ancora)
 {
 	$pat = $list[$i];
 	$function_info = Array();
-	$temp = ereg($pat,$line,&$temp_function_info);
+	////$temp = ereg($pat,$line,&$temp_function_info);
+	$temp = preg_match('/' . addcslashes($pat, '/') . '/',$line,&$temp_function_info);
 	$function_info['function'] = $temp_function_info[1];
 	$function_info['args_in'] = $temp_function_info[2];
 
@@ -1655,11 +1663,13 @@ else
 
 if (!empty($function_info['args_in']))
 {
-	// drop "&" for referenced arguments	
-	$function_info['args_in'] = ereg_replace('&','',$function_info['args_in']);
+	// drop "&" for referenced arguments
+	////$function_info['args_in'] = ereg_replace('&','',$function_info['args_in']);
+	$function_info['args_in'] = preg_replace('/&/','',$function_info['args_in']);
 
 	// drop default values ("... $a=NULL ..." --> "... $a ..." )	
-	$function_info['args_in'] = ereg_replace('=[[:space:]]*[^[:space:]]+[[:space:]]*', ' ',$function_info['args_in']);
+	////$function_info['args_in'] = ereg_replace('=[[:space:]]*[^[:space:]]+[[:space:]]*', ' ',$function_info['args_in']);
+	$function_info['args_in'] = preg_replace('/=[[:space:]]*[^[:space:]]+[[:space:]]*/', ' ',$function_info['args_in']);
 
 	// split input arguments
 	$function_info['list_args_in'] = explode_lines(Array($function_info['args_in']),Array(',',' '),Array());
@@ -1848,7 +1858,8 @@ $ks_space = str_repeat('&nbsp;',8);
 if ((!$is_script) && ($i_fcn == 1))
 {
 
-	$ind = ereg('[\\\/]',$filename);
+	////$ind = ereg('[\\\/]',$filename);
+	$ind = preg_match('/[\\\/]/',$filename);
 	if (!empty($ind))
 	{
 		$filename = substr($filename,$ind);

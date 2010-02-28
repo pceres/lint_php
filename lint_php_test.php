@@ -19,10 +19,11 @@
 
 }
 
-function test2($zipfile=null, $extract=true) {
+function test2($zipfile=null, &$extract=true) {
 $a=($zipfile>2)?$extract:2;
 ;
 ;;;
+$i = 1;
 }
 
 function test3(/* comment 1 */ $zipfile, /* comment 2 */  $extract=true) {
@@ -55,6 +56,21 @@ print "</b></a><br /><br />";
 </script>
 <?php
 	}
+}
+
+function test5()
+{
+while ($i <= 10) {
+    echo $i++;  /* the printed value would be
+                   $i before the increment
+                   (post-increment) */
+}
+do {
+    echo $i++;  /* the printed value would be
+                   $i before the increment
+                   (post-increment) */
+} while ($i <= 10);
+while ($i <= 10) echo $i++;
 }
 
 echo "Test file is valid PHP code!";
