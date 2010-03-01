@@ -3,11 +3,11 @@ url for online web usage:
 http://ars.altervista.org/lint_php/lint_php.php
 
 url for local web usage:
-http://localhost/<lint_php_folder>/lint_php.php
+http://localhost/<lint_php_web_folder>/lint_php.php
 
 command line use for single file:
-php lint_php_cli.php filename.php
+lint_php_cli.php filename.php
 
 command line for recursive folder analysys:
-find . -name '*.php' -exec sh -c 'echo -e "\n{} :\n" && php <lint_php_root_folder>t/lint_php_cli.php {}' \; | less
+find . -name '*.php' -exec sh -c 'echo -e "\n{} :\n" && <lint_php_root_folder>t/lint_php_cli.php {}' \; | less
 
