@@ -20,6 +20,12 @@
 
 */
 
+/*
+
+This script was based on lint.php from phpcyclo project (http://www.ohloh.net/p/phpcyclo)
+
+*/
+
 require_once('lint_php_lib.php');
 
 
@@ -34,10 +40,7 @@ if ($argc < 2) {
     $filename = $argv[1];
 }
 
-//$text = $_POST['lint_text'];
 $text = file_get_contents($filename);
-// var_dump($text);
-// die();
 $debug_level = 0;
 
 if (get_magic_quotes_gpc())
@@ -57,7 +60,6 @@ else
 // main calculation
 $result = lint($text,$debug_level);
 
-//    print_html_header();
 foreach ($result as $id_file => $result_file)
 {
 	foreach ($result_file['lista_functions'] as $id_fcn => $function_info)
@@ -82,7 +84,6 @@ foreach ($result as $id_file => $result_file)
 // sort by mc_count
 arsort($metrics, SORT_NUMERIC);
 
-// var_dump($metrics);
 foreach ($metrics as $function => $count)
 {
 	if (empty($function))
