@@ -3,7 +3,7 @@
 
     lint_php_lib: a PHP script that computes McCabe's cyclomatic complexity of a generic PHP source code
     Copyright (C) 2007  Pasquale Ceres
-    Version 0.12
+    Version 0.13
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1758,7 +1758,7 @@ return $riga;
 function show_functions($lista_functions, $verbosity) {
 
 $result = Array();
-$ks_space = str_repeat('&nbsp;',8);
+$ks_space = str_repeat(' ',8);
 
 
 if ($verbosity)
@@ -1845,7 +1845,7 @@ return $result;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 function manage_unused_function($fcn_name, $fcn_unused_flag, $result, $verbosity) {
 
-$ks_space = str_repeat('&nbsp;',8);
+$ks_space = str_repeat(' ',8);
 
 if ($fcn_unused_flag)
 {

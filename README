@@ -6,7 +6,7 @@ url for local web usage:
 http://localhost/<lint_php_web_folder>/lint_php.php
 
 command line use for single file:
-lint_php_cli.php filename.php
+lint_php_cli.php filename.php [-v] [-vv]
 
 command line for recursive folder analysys:
 find . -name '*.php' -exec sh -c 'echo -e "\n{} :\n" && <lint_php_root_folder>t/lint_php_cli.php {}' \; | less

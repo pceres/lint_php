@@ -4,7 +4,7 @@
 
     lint_php_cli: a PHP script that computes McCabe's cyclomatic complexity of a generic PHP source code
     Copyright (C) 2007  Pasquale Ceres
-    Version 0.12
+    Version 0.13
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,38 +29,61 @@ This script was based on lint.php from phpcyclo project (http://www.ohloh.net/p/
 
 require_once('lint_php_lib.php');
 
-
+// var_dump($argv);
+// var_dump($argc);
+// die('a');
 
 // For large files
 set_time_limit(120);
 
-if ($argc < 2) {
-    die('Not enough arguments');
-    $filename = $_GET['file'];
-} else {
-    $filename = $argv[1];
-}
-
-$text = file_get_contents($filename);
-$debug_level = 0;
-
-if (get_magic_quotes_gpc())
+if ($argc < 2) 
 {
-// magic_quotes_gpc abilitato
-$text = stripslashes($text);
-$debug_level = stripslashes($debug_level);
-}
-
-
-if (empty($text))
-{
-  die('File is empty');
+	show_usage_page();
+	die("Not enough arguments.\n");
 }
 else
 {
+	$filename  = $argv[1];
+
+	if ($argc > 2)
+	{
+		$arguments = $argv[2];
+		
+		if ($arguments === '-v')
+		{
+			$verbose_level = 1;
+		}
+		elseif ($arguments === '-vv')
+		{
+			$verbose_level = 2;
+		}
+		else
+		{
+		var_dump($argv);
+			show_usage_page();
+			die("Wrong arguments.\n");
+		}
+	}
+	else
+	{
+		$verbose_level = 0;
+	}
+}
+
+$text = file_get_contents($filename); // read file
+$debug_level = 0; // no output during parsing
+
+if (empty($text))
+{
+	die("File is empty\n");
+}
+else
+{
+
 // main calculation
 $result = lint($text,$debug_level);
 
+// sort functions by complexity
 foreach ($result as $id_file => $result_file)
 {
 	foreach ($result_file['lista_functions'] as $id_fcn => $function_info)
@@ -97,6 +120,28 @@ foreach ($metrics as $function => $count)
 	}
 }
 
+
+if ($verbose_level > 0)
+{
+	echo "\n\n\n";
+	echo "------------------------------\n";
+
+	$text = $result[0]['res_lint'];
+	foreach ($text as $line)
+	{
+		echo("$line\n");
+	}
+
+	if ($verbose_level > 1)
+	{
+		echo "------------------------------\n";
+		echo "Analisys details:\n";
+
+		$struc = $result[0]['lines_out'];
+		show_lines2($struc['lines'],$struc['numlines'],$struc['list_indent_out'],0,10000,$struc['indent_mccount']);
+	}
+}
+
 echo "\n";
 echo "\n";
 
@@ -105,154 +150,71 @@ echo "\n";
 // end of main code here
 
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-function show_welcome_page($counter,$debug_level) {
-print 'Usage: @php@ lint.php <php script>' . "\n";
-} // end function show_welcome_page
+function show_usage_page() {
+echo <<<END
+SYNOPSIS
+       lint_php_cli.php [-v] [-vv] <php script>
+
+DESCRIPTION
+       This script parses the php file <php script>, and calculates the cyclomatic complexity of its functions
+
+OPTIONS
+      Without options -v and -vv, only the MC count for each function (and the virtual main) is shown.
+      -v     Also show any messages (unused inputs\\outputs\\functions)
+      -vv    Besides the -v output, also show the indented, pruned code, showing the points that increase the MC count
+
+EXAMPLES
+      Verbose output over file lint_php.php:
+          lint_php_cli.php lint_php.php -vv
+ 
+      Recursive analysys of all files inside current folder
+          find . -name '*.php' -exec sh -c 'echo -e "\\n{} :\\n" && lint_php_cli.php {}' \\; | less
+
+END;
+} // end function show_usage_page
 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 function show_lines2($list_lines,$list_numlines,$list_indent,$only_code,$max_lines,$indent_mccount = Array()) {
 
-echo "<table>\n";
-echo "<thead><tr><th>Line</th><th>MC count</th><th>Code</th></tr></thead>\n";
-echo "<tbody>\n";
+echo "Line\tMC count\tCode\n";
+
 for ($i=0;$i<min(count($list_lines),$max_lines);$i++)
 {
-echo "<tr><td>\n";
-// $line = "<pre>".htmlentities($list_lines[$i])."</pre>";
+	$line = $list_lines[$i];
+	$numline = $list_numlines[$i];
+	$indent = $list_indent[$i];
 
-$line = htmlentities($list_lines[$i]);
-$numline = $list_numlines[$i];
-$indent = $list_indent[$i];
+	$num_spaces = $indent*8;
+	$indent_str = str_repeat(':'.str_repeat("\t",1),$indent); // indentazione
 
-$num_spaces = $indent*8;
-// $indent_str = str_repeat('--->',$indent); // indentazione
-$indent_str = str_repeat(':'.str_repeat('&nbsp;',8),$indent); // indentazione
+	$mc_count = $indent_mccount[$i];
+	if ($mc_count > 0)
+	{
+		$ks_mccount = sprintf("(->%1d) \t ", $mc_count);
+	}
+	else
+	{
+		$ks_mccount = " \t ";
+	}
 
-if (count('indent_mccount') > 0)
-{
-$mc_count = $indent_mccount[$i];
-if ($mc_count > 0)
-{
-$ks_mccount = sprintf('(->%1d) </td><td> ', $mc_count);
-}
-else
-{
-$ks_mccount = ' </td><td> ';
-}
-}
-else
-{
-$ks_mccount = '';
-}
-
-if ($only_code)
-{
-echo(sprintf('%s%s%s',$ks_mccount,$indent_str,$line));
-}
-else
-{
-echo(sprintf('%3d </td><td> %s%s%s',$numline,$ks_mccount,$indent_str,$line));
-}
-echo "</td></tr>\n";
+	if ($only_code)
+	{
+		echo(sprintf("%s\t%s%s",$ks_mccount,$indent_str,$line));
+	}
+	else
+	{
+		echo(sprintf("%3d\t%s\t%s%s",$numline,$ks_mccount,$indent_str,$line));
+	}
+	echo "\n";
 } // end for $i
 
-echo "</tbody></table>\n";
-// stampa(' ');
-// stampa('------------------------------------------------------------------------------');
+echo "\n";
 
 } // end function show_lines2
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-function print_redirect_header($redirect_url) {
-?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 TRANSITIONAL//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>lint_php</title>
-<meta http-equiv="refresh" content="0;url=<?php echo $redirect_url; ?>" />
-</head>
-<body>
-</body>
-</html>
-<?php
-} // end function show_redirect_header
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-function print_html_header() {
-?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 TRANSITIONAL//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>lint_php</title>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta name="generator" content="kate">
-<meta name="description" content="An online tool to compute PHP code McCabe's cyclomatic complexity">
-<meta name="keywords" content="PHP, McCabe, Cyclomatic complexity, GPL, Pasquale Ceres, Caposele">
-</head>
-<body>
-<?php
-} // end function show_header
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-function print_html_footer() {
-?>
-</body>
-</html>
-<?php
-} // end function show_footer
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-function log_action($workdir,$string)
-{
-/*
-$script_filename = $_SERVER['SCRIPT_FILENAME'];
-$root_path = dirname($script_filename).'/';
-$logfile = $root_path.'logfile.txt';
-
-// read logdata
-$file = file($logfile);
-if ($file === false)
-{
-$logdata = Array();
-}
-else
-{
-foreach($file as $line)
-{
-$var = split("::",$line);
-if (!empty($var[1]))
-{
-$logdata[$var[0]] = $var[1];
-}
-}
-}
-
-// edit logdata
-$logdata[$string]++;
-$counter = $logdata[$string];
-
-// write logdata
-$fid = fopen($logfile,'w');
-if ($fid !== False)
-{
-foreach ($logdata as $tag => $value)
-{
-$ks = "$tag::$value::\n";
-fwrite($fid,$ks);
-}
-fclose($fid);
-}
-else
-{
-die("File I/O error writing $logfile");
-}
-*/
-return 1;
-
-}
 ?>
