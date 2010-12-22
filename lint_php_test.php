@@ -78,4 +78,25 @@ while ($i <= 10) echo $i++;
 
 echo "Test file is valid PHP code!";
 
+
+$a = foo();
+
+function $output_var = foo()
+{ disp('hello');
+$output_var_mistype = '';
+}
+
+
+class MyClass
+{
+    private static $impl;
+    private function __construct() { }
+    public static function getInstance() 
+    {
+        self::$impl = new MyClass();
+    }
+}
+MyClass::getInstance();    
+
+
 ?>
