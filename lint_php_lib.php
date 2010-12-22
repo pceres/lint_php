@@ -1767,6 +1767,12 @@ if ($verbosity)
 }
 
 
+// List of function for which unused-check is not possible
+// For instance, class constructors and destructors (and all class magic functions) are declared as __construct and 
+// __destruct, but the actual use is issued by the "new" or "unset" token
+$list_fcn_unused_skip = Array('__construct', '__destruct', '__call', '__callStatic', '__get', '__set', '__isset',
+	'__unset', '__sleep', '__wakeup', '__toString', '__invoke', '__set_state', '__clone'); 
+
 for ($i_fcn = 0; $i_fcn < count($lista_functions); $i_fcn++)
 {
 
@@ -1778,6 +1784,7 @@ for ($i_fcn = 0; $i_fcn < count($lista_functions); $i_fcn++)
 	$fcn_unused_inputs = $function_info['unused_inputs'];
 	$fcn_unused_outputs = $function_info['unused_outputs'];
 	$fcn_unused_flag = $function_info['unused_flag'];
+
 
 // echo "$i_fcn<br><br>";	// !!!
 // var_dump($function_info);
@@ -1819,7 +1826,11 @@ for ($i_fcn = 0; $i_fcn < count($lista_functions); $i_fcn++)
 
 
 	// check declared but unused functions
-	$result = manage_unused_function($fcn_name, $fcn_unused_flag, $result, $verbosity);
+	$flg_fcn_unused = !in_array($fcn_name,$list_fcn_unused_skip); // check if the unused-check is possible
+	if ($flg_fcn_unused)
+	{
+		$result = manage_unused_function($fcn_name, $fcn_unused_flag, $result, $verbosity);
+	}
 
 
 	// check unused input
