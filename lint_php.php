@@ -219,6 +219,7 @@ If you have an Apache-PHP system (virtually every GNU/Linux distribution), you c
 <li>rev 0.11: bug fixing of /*...*/ comments in HTML\Javascript code; (06.01.2010)</li>
 <li>rev 0.12: command line usage; deprecated ereg functions replaced with preg counterparts; (28.02.2010)</li>
 <li>rev 0.13: all output available via browser is now available via CLI usage; (04.03.2010)</li>
+<li>rev 0.14: check for function output argument not set; (22.12.2010)</li>
 </ul>
 
 <br><b>How can you contribute?</b><br>

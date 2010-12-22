@@ -1594,18 +1594,21 @@ function get_function_info($line) {
 
 if (empty($line) || ($line == '} '))
 {
-    $function_info = Array('function' => '');
-    $function_info['args_in'] = '';
-    $function_info['args_out'] = '';
-    $function_info['list_args_in'] = Array();
-    $function_info['list_args_out'] = Array();
-    $function_info['mc_count'] = 1;
+	$function_info = Array('function' => '');
+	$function_info['args_in'] = '';
+	$function_info['args_out'] = '';
+	$function_info['list_args_in'] = Array();
+	$function_info['list_args_out'] = Array();
+	$function_info['mc_count'] = 1;
 
-    return $function_info;
+	return $function_info;
 }
 
 
-$list = Array('[[:space:]]*function[[:space:]]+&?[[:space:]]*([^\(]*)[[:space:]]*\([[:space:]]*([^\)]*)');
+$list = Array(
+	'function[[:space:]]+()&?[[:space:]]*([^\(=]*)[[:space:]]*\([[:space:]]*([^\)]*)',
+	'function[[:space:]]+([^=]*)=[[:space:]]+&?[[:space:]]*([^\(]*)[[:space:]]*\([[:space:]]*([^\)]*)'
+	);
 
 
 $ancora = 1;
@@ -1613,34 +1616,37 @@ $i = 0;
 while ($ancora)
 {
 	$pat = $list[$i];
+// echo "$i - $pat<br>";
 	$function_info = Array();
 	$temp = preg_match('/' . addcslashes($pat, '/') . '/',$line,$temp_function_info);
-	$function_info['function'] = $temp_function_info[1];
-	$function_info['args_in'] = $temp_function_info[2];
+	$function_info['args_out'] = $temp_function_info[1];
+	$function_info['function'] = $temp_function_info[2];
+	$function_info['args_in']  = $temp_function_info[3];
 
 	$i = $i+1;
-	$ancora = ( empty($function_info) && ($i < count($list)) );
+	$ancora = ( empty($function_info['function']) && ($i < count($list)) );
 }
 
 
 if (!array_key_exists('args_out',$function_info))
 {
-    $function_info['args_out'] = '';
+	$function_info['args_out'] = '';
 }
 if (!array_key_exists('function',$function_info))
 {
-    $function_info['function'] = '';
+	$function_info['function'] = '';
 }
 if (!array_key_exists('args_in',$function_info))
 {
-    $function_info['args_in'] = '';
+	$function_info['args_in'] = '';
 }
 
 
 if (empty($function_info['function']))
 {
-    stampa('Problema!');
-    die($line);
+	stampa('Problema nel parsing della funzione:');
+	var_dump($function_info);
+	die($line);
 }
 
 
