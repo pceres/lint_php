@@ -1215,7 +1215,7 @@ for ($i = 0; $i < count($list_lines_in); $i++)
 	$stati = $temp_result[9];
 	$mc_inc = $temp_result[10];
 
-// echo "$numline-->$indent<br>";	// !!!
+// echo "$numline-->$indent-$mc_inc<br>";	// !!!
 // var_dump($function_info['function']);echo "<br>";
 
 
@@ -1420,13 +1420,14 @@ for ($i_token = 0; $i_token < count($line_tokens); $i_token++)
 		}
 		if ($num_tok[$i_token])
 		{
-			preg_match_all('/&+/',$line,$and1);
+			preg_match_all('/(&&)+/',$line,$and1);
 			preg_match_all('/[^[:alnum:]_]and[^[:alnum:]_]?/',$line,$and2);
 			$ands = count($and1[0])+count($and2[0]);
 			
-			preg_match_all('/\|+/',$line,$or1);
+			preg_match_all('/(\|\|)+/',$line,$or1);
 			preg_match_all('/[^[:alnum:]_]or[^[:alnum:]_]?/',$line,$or2);
 			$ors = count($or1[0])+count($or2[0]);
+			//echo "$line --> $token (and: $ands - or: $ors)<br>";
 			
 			$mc_inc = $mc_inc+$ands+$ors;
 		}

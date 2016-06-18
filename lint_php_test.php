@@ -76,6 +76,16 @@ do {
 while ($i <= 10) echo $i++;
 }
 
+function test6($i)
+{
+// the following line counts +3: 1 for the if, 2 for the && and || (logical operators)
+if(!((edges >> edge) && 0x1 || $i)) continue;
+/* the following is a bitwise operator, so the following line should only count +1 because of the if,
+  but not +2 because of the & and | (bitwise operators)
+*/
+if(!((edges >> edge) & 0x1 | $i)) continue;
+}
+
 echo "Test file is valid PHP code!";
 
 

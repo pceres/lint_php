@@ -220,12 +220,13 @@ If you have an Apache-PHP system (virtually every GNU/Linux distribution), you c
 <li>rev 0.12: command line usage; deprecated ereg functions replaced with preg counterparts; (28.02.2010)</li>
 <li>rev 0.13: all output available via browser is now available via CLI usage; (04.03.2010)</li>
 <li>rev 0.14: check for function output argument not set; (22.12.2010)</li>
+<li>rev 0.15: bug fixing for wrong counting of bitwise operators; (18.06.2016)</li>
 </ul>
 
 <br><b>How can you contribute?</b><br>
 Writing this code took me pretty much time, so I'll be glad to know someone is using it!<br>
 Also let me know about any bugs, PHP source code that makes the script fail, or, even better, improvements to the code: I'll be happy to include them into lint_php!<br>
-You can email me, or just write a quick comment <a href="http://collabedit.com/86168">here</a>.
+You can email me, or just write a quick comment <a href="https://demo.firepad.io/#eFdb6I9f0O">here</a>.
 
 <br><br>
 Pasquale Ceres<br>
